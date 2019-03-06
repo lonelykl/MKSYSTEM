@@ -249,6 +249,103 @@ $stmt->execute();
  }
 
  #} end region
+
+ #region (Autogenerate University Admin){
+ /**
+     * Auto generate the Uni Admin once created University 
+     */
+public function autoGenerateAdmin($uniCode,$uniContact,$uniEmail) 
+{
+$txtReturn = '';
+$uniAdmin = strtoupper($uniCode.'admin');
+$uniAdminName = strtoupper($uniCode.' administrator');
+$uniPassword = '123456';
+$adminType = 'UNI';
+$sqlUniCounter = "INSERT INTO lf_gbl_user(comp_code,user_id,user_name,password,type,email,contact_no,lf_uid_created,lf_date_created)Value('MY','$uniAdmin','$uniAdminName','$uniPassword','$adminType','$uniEmail','$uniContact','SYSTEM',now())";
+$stmt = $this->conn->prepare($sqlUniCounter);
+$stmt->execute();
+
+   if ($stmt->execute()) 
+{
+    $stmt-> bind_result($token2);
+        if($stmt-> fetch() ) {
+    $txtReturn = $token2;
+        } 
+    if($txtReturn != ""){
+       return false;
+    }else{
+    return true;
+    }
+    } else {
+        return true;
+    }
+
+ }
+
+ #} end region
+
+ #region (Autogenerate University Admin){
+ /**
+     * Auto generate the Uni Admin once created University 
+     */
+public function autoApproveApplication($uniCode,$uniContact,$uniEmail) 
+{
+$txtReturn = '';
+
+$comcode = 'MY';
+$pstrUserID = "b1401800";
+$dbQualification = '';
+$QualificationCount = 0;
+$dbBestOf = '';
+$userQualification='';
+$userGrade='';
+$finalResult = 0;
+$userObtainPoint = 0;
+
+$stmtUserGrade = $conn->prepare("SELECT qualification_code,user_grade FROM lf_applicant_grade WHERE comp_code = '$comcode' and user_id = '$pstrUserID'");
+$stmtUserGrade->execute();
+$stmtUserGrade->bind_result($token2,$token3);
+
+while ( $stmtUserGrade-> fetch() ) { 
+    $userQualification = $token2;
+    $userGrade = $token3;
+}
+$stmtUserGrade->close();
+
+//this function to use Applicant Grade to get the qualification grading
+$stmtQualification = $conn->prepare("SELECT grade_system,average_best_of FROM lf_gbl_qualification WHERE comp_code = '$comcode' and qualification_code = '$userQualification'");
+$stmtQualification->execute();
+$stmtQualification->bind_result($token2,$token3);
+
+while ( $stmtQualification-> fetch() ) { 
+    $dbQualification = $token2;
+    $dbBestOf = $token3;
+}
+$stmtQualification->close();
+
+$qualificationGradeArray = explode(";",$dbQualification);
+$QualificationCount = count($qualificationGradeArray) - 1;
+$userGradeArray = explode(";",$userGrade);
+
+for($i=0; $i < $dbBestOf; $i++)
+{
+    $userGradeArrayEach = explode("=",$userGradeArray[$i]);
+    echo $userGradeArrayEach[0]." and ".$userGradeArrayEach[1] . "</br>";
+
+    for($y=0; $y < $QualificationCount; $y++)
+    {
+    $qualificationGradeArrayEach = explode("=",$qualificationGradeArray[$y]);
+    if ($userGradeArrayEach[1] == $qualificationGradeArrayEach[0]){
+        $userObtainPoint += $qualificationGradeArrayEach[1];
+    }
+}
+}
+
+$finalResult = $userObtainPoint/$dbBestOf;
+return $finalResult;
+ }
+
+ #} end region
 }
 
 
