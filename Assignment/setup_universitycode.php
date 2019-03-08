@@ -71,6 +71,7 @@ function buttonFunction(str){
 				document.getElementById("btnCancel").disabled = false;
 				document.getElementById("btnPrev").disabled = true;
 				document.getElementById("btnNext").disabled = true;
+				document.getElementById("btnSubmit").disabled = false; 
 				break;
 			case "Edit":
 				buttonEditfunction(str);
@@ -79,6 +80,7 @@ function buttonFunction(str){
 				document.getElementById("btnCancel").disabled = false;
 				document.getElementById("btnPrev").disabled = true;
 				document.getElementById("btnNext").disabled = true;
+				document.getElementById("btnSubmit").disabled = false; 
 				break;
 			case "Search":
 				buttonNextPrevfunction(str);
@@ -89,10 +91,12 @@ function buttonFunction(str){
 	 			document.getElementById("btnSearch").disabled = true;
 	 			document.getElementById("btnPrev").disabled = true;
 	 			document.getElementById("btnNext").disabled = false;
+				 document.getElementById("btnSubmit").disabled = true; 
 				break;
 			case "Cancel":
 				buttonCancelfunction(str);
 				document.getElementById("lblAction").value = '';
+				document.getElementById("btnSubmit").disabled = true; 
 
 				break;
 			case "Delete":
@@ -115,6 +119,8 @@ function buttonCancelfunction(str) {
 	document.getElementById("lblPageB").value = '';
     document.getElementById("txtUniversityCode").value = '';
 	document.getElementById("txtUniversityDesc").value = '';
+	document.getElementById("txtUniversityEmail").value = '';
+	document.getElementById("txtUniversityContact").value = '';
 	
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnSearch").disabled = false;
@@ -136,6 +142,8 @@ function buttonCancelfunction(str) {
 	document.getElementById("lblPageB").value = '';
 	document.getElementById("txtUniversityCode").value = '';
 	document.getElementById("txtUniversityDesc").value = '';
+	document.getElementById("txtUniversityEmail").value = '';
+	document.getElementById("txtUniversityContact").value = '';
 
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnEdit").disabled = true;
@@ -148,6 +156,8 @@ function buttonCancelfunction(str) {
 	document.getElementById("lblPageB").value = '';
 	document.getElementById("txtUniversityCode").value = '';
 	document.getElementById("txtUniversityDesc").value = '';
+	document.getElementById("txtUniversityEmail").value = '';
+	document.getElementById("txtUniversityContact").value = '';
 
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnEdit").disabled = true;
@@ -159,6 +169,8 @@ function buttonCancelfunction(str) {
 	}
 	document.getElementById("txtUniversityCode").disabled =true;
 	document.getElementById("txtUniversityDesc").disabled =true;
+	document.getElementById("txtUniversityEmail").disabled = true;
+	document.getElementById("txtUniversityContact").disabled = true;
 }
 
 function buttonAddfunction(str) {
@@ -166,14 +178,20 @@ function buttonAddfunction(str) {
 	document.getElementById("lblPageB").value = '';
     document.getElementById("txtUniversityCode").value = '';
 	document.getElementById("txtUniversityDesc").value = '';
+	document.getElementById("txtUniversityEmail").value = '';
+	document.getElementById("txtUniversityContact").value = '';
 	
 	document.getElementById("txtUniversityCode").disabled =false;
 	document.getElementById("txtUniversityDesc").disabled =false;
+	document.getElementById("txtUniversityEmail").disabled = false;
+	document.getElementById("txtUniversityContact").disabled = false;
 }
 
 function buttonEditfunction(str) {
-	document.getElementById("txtUniversityCode").disabled =false;
+	document.getElementById("txtUniversityCode").disabled =true;
 	document.getElementById("txtUniversityDesc").disabled =false;
+	document.getElementById("txtUniversityEmail").disabled = false;
+	document.getElementById("txtUniversityContact").disabled = false;
 }
 
 function buttonNextPrevfunction(str) {
@@ -196,9 +214,13 @@ function buttonNextPrevfunction(str) {
 	  document.getElementById("lblPageB").value = tmpStr[1];
       document.getElementById("txtUniversityCode").value = tmpStr[3];
 	  document.getElementById("txtUniversityDesc").value = tmpStr[4];
+	  document.getElementById("txtUniversityEmail").value = tmpStr[5];
+	  document.getElementById("txtUniversityContact").value = tmpStr[6];
 
 	  document.getElementById("txtUniversityCode").disabled =true;
 	  document.getElementById("txtUniversityDesc").disabled =true;
+	  document.getElementById("txtUniversityEmail").disabled = true;
+	  document.getElementById("txtUniversityContact").disabled = true;
 
 	if(tmpStr[0] >= 1){
 	 if(str == 'Next'){
@@ -224,6 +246,47 @@ function buttonNextPrevfunction(str) {
   };
   xhttp.open("GET", "lf_search_function.php?v="+strColVal+"&t="+strTable+"&c="+strcolName+"&f="+strFunction, true);
   xhttp.send();   
+}
+
+function unlockField(){
+	document.getElementById("txtUniversityCode").disabled =false;
+}
+
+function chkValidEmail(str){
+	if(str.value != ""){
+		if(!str.value.includes("@")){
+		alert("("+str.value+") Invalid Email Address");
+		str.value = "";
+	}else{
+		str.value = str.value;
+	}
+	return str.value;
+	}
+}
+
+function chkValidNumber(str){
+	if(str.value != ""){
+		if(str.value.length > 9){
+			if(str.value.length < 12){	
+				if(isNaN(str.value)){
+					alert("("+str.value+") Invalid Phone Number");
+					str.value = "";
+				}else{
+					str.value = str.value.replace(".","");
+					str.value = str.value.replace("+","");
+					str.value = str.value.replace("-","");
+					str.value = str.value;
+				}
+			}else{
+				alert("("+str.value+") Invalid Phone Number Format");
+				str.value = "";	
+			}
+		}else{
+			alert("("+str.value+") Invalid Phone Number Format");
+			str.value = "";
+		}
+		return str.value;
+	}	
 }
 </script>
 <body>
@@ -294,7 +357,7 @@ University Code
 :
 </td>
 <td width="110%">
-<input type="text" name="txtUniversityCode" id="txtUniversityCode" class="form-control" placeholder="Enter University Code" disabled>
+<input type="text" name="txtUniversityCode" id="txtUniversityCode" class="form-control" placeholder="Enter University Code" maxlength='5' disabled>
 </td>
 </tr>
 </table>
@@ -311,7 +374,41 @@ University Description
 :
 </td>
 <td width="110%">
-<input type="text" name="txtUniversityDesc" id="txtUniversityDesc" class="form-control" placeholder="Enter University Description" disabled>
+<input type="text" name="txtUniversityDesc" id="txtUniversityDesc" class="form-control" placeholder="Enter University Description" maxlength="255" disabled>
+</td>
+</tr>
+</table>
+</div>							
+</div>
+<div class="row form-group">
+<div class="col-md-12">
+<table width="130%">
+<tr>
+<td width="25%">
+E-mail
+</td>
+<td width="5%">
+:
+</td>
+<td width="110%">
+<input type="text" name="txtUniversityEmail" id="txtUniversityEmail" class="form-control" placeholder="Enter University E-mail" maxlength="100" onBlur="chkValidEmail(this);" disabled>
+</td>
+</tr>
+</table>
+</div>							
+</div>
+<div class="row form-group">
+<div class="col-md-12">
+<table width="130%">
+<tr>
+<td width="25%">
+Contact
+</td>
+<td width="5%">
+:
+</td>
+<td width="110%">
+<input type="text" name="txtUniversityContact" id="txtUniversityContact" class="form-control" placeholder="Enter University Contact (eg. 0123456789)" maxlength="20" onBlur="chkValidNumber(this);" disabled>
 </td>
 </tr>
 </table>
@@ -360,7 +457,7 @@ Date / UID Modified
 </div>							
 </div>
 <div class="form-group">
-<input type="submit" value="Submit" class="btn btn-primary">					
+<input type="submit" value="Submit" name="btnSubmit" id="btnSubmit" class="btn btn-primary" onClick="unlockField();" disabled>					
 </div>		
 </form>
 </div>		

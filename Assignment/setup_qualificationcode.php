@@ -71,6 +71,7 @@ function buttonFunction(str){
 				document.getElementById("btnCancel").disabled = false;
 				document.getElementById("btnPrev").disabled = true;
 				document.getElementById("btnNext").disabled = true;
+				document.getElementById("btnSubmit").disabled = false; 
 				break;
 			case "Edit":
 				buttonEditfunction(str);
@@ -79,6 +80,7 @@ function buttonFunction(str){
 				document.getElementById("btnCancel").disabled = false;
 				document.getElementById("btnPrev").disabled = true;
 				document.getElementById("btnNext").disabled = true;
+				document.getElementById("btnSubmit").disabled = false; 
 				break;
 			case "Search":
 				buttonNextPrevfunction(str);
@@ -89,10 +91,12 @@ function buttonFunction(str){
 	 			document.getElementById("btnSearch").disabled = true;
 	 			document.getElementById("btnPrev").disabled = true;
 	 			document.getElementById("btnNext").disabled = false;
+				 document.getElementById("btnSubmit").disabled = true; 
 				break;
 			case "Cancel":
 				buttonCancelfunction(str);
 				document.getElementById("lblAction").value = '';
+				document.getElementById("btnSubmit").disabled = true; 
 
 				break;
 			case "Delete":
@@ -120,6 +124,10 @@ function buttonCancelfunction(str) {
 	document.getElementById("txtMaxScore").value ='';
 	document.getElementById("txtGradeSystem").value ='';
 	document.getElementById("txtGradeSubject").value ='';
+	document.getElementById("txtGrade").value ='';
+	document.getElementById("txtScore").value ='';
+	document.getElementById("drpSubjectBefore").value ='';
+	document.getElementById("txtSubjectAfter").value ='';
 	
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnSearch").disabled = false;
@@ -179,6 +187,12 @@ function buttonCancelfunction(str) {
 	document.getElementById("txtMaxScore").disabled =true;
 	document.getElementById("txtGradeSystem").disabled =true;
 	document.getElementById("txtGradeSubject").disabled =true;
+	document.getElementById("txtGrade").disabled =true;
+	document.getElementById("txtScore").disabled =true;
+	document.getElementById("drpSubjectBefore").disabled =true;
+	document.getElementById("txtSubjectAfter").disabled =true;
+	document.getElementById("btnAmendGrade").disabled =true;
+	document.getElementById("btnAmendSubject").disabled =true;
 }
 
 function buttonAddfunction(str) {
@@ -191,24 +205,41 @@ function buttonAddfunction(str) {
 	document.getElementById("txtMaxScore").value ='';
 	document.getElementById("txtGradeSystem").value ='';
 	document.getElementById("txtGradeSubject").value ='';
+	document.getElementById("txtGrade").value ='';
+	document.getElementById("txtScore").value ='';
+	document.getElementById("drpSubjectBefore").value ='';
+	document.getElementById("txtSubjectAfter").value ='';
 	
 	document.getElementById("txtQualificationCode").disabled =false;
 	document.getElementById("txtQualificationDesc").disabled =false;
     document.getElementById("txtAverageBestOf").disabled =false;
 	document.getElementById("txtMinScore").disabled =false;
 	document.getElementById("txtMaxScore").disabled =false;
-	document.getElementById("txtGradeSystem").disabled =false;
-	document.getElementById("txtGradeSubject").disabled =false;
+	document.getElementById("txtGradeSystem").disabled =true;
+	document.getElementById("txtGradeSubject").disabled =true;
+	document.getElementById("txtGrade").disabled =false;
+	document.getElementById("txtScore").disabled =false;
+	document.getElementById("drpSubjectBefore").disabled = true;
+	document.getElementById("txtSubjectAfter").disabled = false;
+	document.getElementById("btnAmendGrade").disabled =false;
+	document.getElementById("btnAmendSubject").disabled =false;
 }
 
 function buttonEditfunction(str) {
-	document.getElementById("txtQualificationCode").disabled =false;
+	document.getElementById("txtQualificationCode").disabled =true;
 	document.getElementById("txtQualificationDesc").disabled =false;
     document.getElementById("txtAverageBestOf").disabled =false;
 	document.getElementById("txtMinScore").disabled =false;
 	document.getElementById("txtMaxScore").disabled =false;
-	document.getElementById("txtGradeSystem").disabled =false;
-	document.getElementById("txtGradeSubject").disabled =false;
+	document.getElementById("txtGradeSystem").disabled =true;
+	document.getElementById("txtGradeSubject").disabled =true;
+	document.getElementById("txtGrade").disabled =false;
+	document.getElementById("txtScore").disabled =false;
+	document.getElementById("drpSubjectBefore").disabled =false;
+	document.getElementById("txtSubjectAfter").disabled =false;
+	document.getElementById("btnAmendGrade").disabled =false;
+	document.getElementById("btnAmendSubject").disabled =false;
+	genDrpDwnListSubject();
 }
 
 function buttonNextPrevfunction(str) {
@@ -270,6 +301,168 @@ function buttonNextPrevfunction(str) {
   xhttp.open("GET", "lf_search_function.php?v="+strColVal+"&t="+strTable+"&c="+strcolName+"&f="+strFunction, true);
   xhttp.send();   
 }
+function addGrade(){
+	var strGrade = document.getElementById("txtGrade").value.toUpperCase();
+	var strScore = document.getElementById("txtScore").value;
+	var strGradeSystem = document.getElementById("txtGradeSystem").value;
+	var strFlag = true;
+	
+	var array = "";
+	var arrayCount = "";
+	var arryItem = "";
+	var tmpStr = "";
+	var newItem = false;
+	var piority = false;
+	var i;
+
+	if(strGrade.trim() != ""){
+			if(strScore.trim() != ""){
+
+	if(strGradeSystem.trim() != ""){
+		array = strGradeSystem.split(";");
+		arrayCount = array.length -1;
+
+		for(i=0;i<arrayCount;i++){
+			arrayItem = array[i].split("=");
+			if(strGrade == arrayItem[0]){
+				tmpStr += strGrade + "=" + strScore + ";";
+				piority = true;
+				newItem = false;
+			}else{
+				tmpStr +=  array[i] + ";";
+				if(!piority){
+					newItem = true;
+				}
+			}
+		}
+		if(newItem){
+			tmpStr += strGrade + "=" + strScore + ";";
+		}
+		document.getElementById("txtGradeSystem").value = "";
+		document.getElementById("txtGradeSystem").value += tmpStr;
+		document.getElementById("txtGrade").value = "";
+		document.getElementById("txtScore").value = "";
+		strFlag=false;
+
+	}
+
+	if(strFlag){
+			document.getElementById("txtGradeSystem").value += strGrade + "=" + strScore + ";";
+			document.getElementById("txtGrade").value = "";
+			document.getElementById("txtScore").value = "";
+	}
+		}else{
+			alert("Score Cannot be Empty");	
+			}
+		}else{
+			alert("Grade Cannot be Empty");
+		}
+	
+}
+function addSubject(){
+	var strSubjectBefore = document.getElementById("drpSubjectBefore").value.toUpperCase();
+	var strSubjectAfter = document.getElementById("txtSubjectAfter").value.toUpperCase();
+	var strGradeSubject = document.getElementById("txtGradeSubject").value;
+	var strFlag = true;
+	
+	var array = "";
+	var arrayCount = "";
+	var editMode = false;
+	var tmpStr = "";
+	var newItem = false;
+	var piority = false;
+	var i;
+
+	if(strSubjectAfter.trim() != ""){
+		if(strGradeSubject.trim() != ""){
+		array = strGradeSubject.split(";");
+		arrayCount = array.length -1;
+
+		for(i=0;i<arrayCount;i++){
+			if(strSubjectBefore != ""){
+				if(strSubjectBefore == array[i]){
+					tmpStr += strSubjectAfter + ";";
+					piority = true;
+					newItem = false;
+				}else{
+					tmpStr += array[i] + ";";
+					if(!piority){
+						newItem = true;
+					}
+				}
+			}else{
+				if(strSubjectAfter == array[i]){
+					tmpStr += strSubjectAfter + ";";
+					piority = true;
+					newItem = false;
+				}else{
+	
+				tmpStr += array[i] + ";";
+					if(!piority){
+						newItem = true;
+					}	
+				}
+			}
+		}
+
+		if(newItem){
+			tmpStr += strSubjectAfter + ";";
+		}
+
+		document.getElementById("txtGradeSubject").value = "";
+		document.getElementById("txtGradeSubject").value += tmpStr;
+		document.getElementById("drpSubjectBefore").value = "";
+		document.getElementById("txtSubjectAfter").value = "";
+		strFlag=false;
+
+	}
+
+	if(strFlag){
+			document.getElementById("txtGradeSubject").value += strSubjectAfter + ";";
+			document.getElementById("drpSubjectBefore").value = "";
+			document.getElementById("txtSubjectAfter").value = "";
+	}
+		}else{
+			alert("Subject Cannot be Empty");
+		}
+}
+
+function unlockField(){
+	document.getElementById("txtQualificationCode").disabled = false;
+	document.getElementById("txtGradeSystem").disabled = false;
+	document.getElementById("txtGradeSubject").disabled = false;
+}
+
+function genDrpDwnListSubject(){
+	document.getElementById("drpSubjectBefore").options.length = 1;
+
+	var select = document.getElementById("drpSubjectBefore");
+	var strGradeSubject = document.getElementById("txtGradeSubject").value;
+	var i;
+	
+	if(strGradeSubject.trim() != ""){
+		document.getElementById("drpSubjectBefore").disabled=false;
+		array = strGradeSubject.split(";");
+		arrayCount = array.length -1;
+
+		for(i = 0; i < arrayCount; i++) {
+        var option = document.createElement('option');
+        option.text = option.value = array[i];
+        select.add(option, 1);
+		}
+	}
+}
+
+function chkNumeric(str){
+	if(isNaN(str.value)){
+		alert("(" + str.value + ") is not a number format.");
+		str.value = "";
+	}else{
+		str.value = str.value;
+	}
+	return str.value;
+}
+
 </script>
 <body>
 <div class="fh5co-loader"></div>
@@ -339,7 +532,7 @@ Qualification Code
 :
 </td>
 <td width="110%">
-<input type="text" name="txtQualificationCode" id="txtQualificationCode" class="form-control" placeholder="Enter Qualification Code" disabled>
+<input type="text" name="txtQualificationCode" id="txtQualificationCode" class="form-control" placeholder="Enter Qualification Code" maxLength="20" disabled>
 </td>
 </tr>
 </table>
@@ -356,7 +549,7 @@ Qualification Description
 :
 </td>
 <td width="110%">
-<input type="text" name="txtQualificationDesc" id="txtQualificationDesc" class="form-control" placeholder="Enter Qualification Description" disabled>
+<input type="text" name="txtQualificationDesc" id="txtQualificationDesc" class="form-control" placeholder="Enter Qualification Description" maxLength="255" disabled>
 </td>
 </tr>
 </table>
@@ -373,7 +566,7 @@ Average Best Of
 :
 </td>
 <td width="110%">
-<input type="text" name="txtAverageBestOf" id="txtAverageBestOf" class="form-control" placeholder="Enter Average Best Of" disabled>
+<input type="text" name="txtAverageBestOf" id="txtAverageBestOf" class="form-control" placeholder="Enter Average Best Of" maxLength="4" onblur="chkNumeric(this);" disabled>
 </td>
 </tr>
 </table>
@@ -390,7 +583,7 @@ Minimum Score
 :
 </td>
 <td width="110%">
-<input type="text" name="txtMinScore" id="txtMinScore" class="form-control" placeholder="Enter Minimum Score" disabled>
+<input type="text" name="txtMinScore" id="txtMinScore" class="form-control" placeholder="Enter Minimum Score" maxLength="4" onblur="chkNumeric(this);" disabled>
 </td>
 </tr>
 </table>
@@ -407,7 +600,7 @@ Maximum Score
 :
 </td>
 <td width="110%">
-<input type="text" name="txtMaxScore" id="txtMaxScore" class="form-control" placeholder="Enter Maximum Score" disabled>
+<input type="text" name="txtMaxScore" id="txtMaxScore" class="form-control" placeholder="Enter Maximum Score" maxLength="4" onblur="chkNumeric(this);" disabled>
 </td>
 </tr>
 </table>
@@ -423,8 +616,31 @@ Grade System
 <td width="5%">
 :
 </td>
+<td width="30%" colspan="5">
+<input type="text" name="txtGrade" id="txtGrade" class="form-control" placeholder="Enter Grade" disabled>
+</td>
+<td width="30%">
+<input type="text" name="txtScore" id="txtScore" class="form-control" placeholder="Enter Score" disabled>
+</td>
+<td width="40%">
+<input type="button" value="AMEND" name="btnAmendGrade" id="btnAmendGrade" onClick="addGrade();" disabled>					
+</td>
+</tr>
+</table>
+</div>							
+</div>
+<div class="row form-group">
+<div class="col-md-12" >
+<table width="130%">
+<tr>
+<td width="25%">
+
+</td>
+<td width="5%">
+
+</td>
 <td width="110%">
-<input type="text" name="txtGradeSystem" id="txtGradeSystem" class="form-control" placeholder="Enter Grade System" disabled>
+<textarea name="txtGradeSystem" id="txtGradeSystem" class="form-control" placeholder="Enter Grade System" disabled style="resize:none;height:100px;"></textarea>
 </td>
 </tr>
 </table>
@@ -440,8 +656,34 @@ Grade Subject
 <td width="5%">
 :
 </td>
+<td width="30%" colspan="5">
+
+<select name="drpSubjectBefore" id="drpSubjectBefore" style="width: 100%;" disabled>
+<option value="" checked></option>
+</select>
+</td>
+<td width="30%">
+<input type="text" name="txtSubjectAfter" id="txtSubjectAfter" class="form-control" placeholder="Enter Subject" disabled></textarea>
+</td>
+<td width="40%">
+<input type="button" value="AMEND" name="btnAmendSubject" id="btnAmendSubject" onClick="addSubject();genDrpDwnListSubject();" disabled>					
+</td>
+</tr>
+</table>
+</div>							
+</div>
+<div class="row form-group">
+<div class="col-md-12">
+<table width="130%">
+<tr>
+<td width="25%">
+
+</td>
+<td width="5%">
+
+</td>
 <td width="110%">
-<input type="text" name="txtGradeSubject" id="txtGradeSubject" class="form-control" placeholder="Enter Grade Subject" disabled>
+<textarea name="txtGradeSubject" id="txtGradeSubject" class="form-control" placeholder="Enter Grade Subject" disabled style="resize:none;height:100px;"></textarea>
 </td>
 </tr>
 </table>
@@ -490,7 +732,7 @@ Date / UID Modified
 </div>							
 </div>
 <div class="form-group">
-<input type="submit" value="Submit" class="btn btn-primary">					
+<input type="submit" value="Submit" name="btnSubmit" id="btnSubmit" class="btn btn-primary" onClick="unlockField();" disabled>					
 </div>		
 </form>
 </div>		

@@ -29,35 +29,36 @@ $txtUserName = strtoupper($_REQUEST['txtUserName']);
 $txtPassword = $_REQUEST['txtPassword'];
 $txtUserType = strtoupper($_REQUEST['drpUserType']);
 $txtEmail = $_REQUEST['txtEmail'];
+$txtContact = $_REQUEST['txtContact'];
 $txtStatus = 'N';
 $txtUIDCreated= "SYSTEM";
 $txtDateCreated = $dt->format('Y/m/d'); 
 $path = IP_CONFIG.PATH_WAY;
 
 $redirect_url = 'http://'.$path.'/login.php'.$sessionInfoCond;
-$redirect_url_fail = 'http://'.$path.'/signup.php'.$sessionInfoCond;
+$redirect_url_fail = 'http://'.$path.'/register.php'.$sessionInfoCond;
 $result= false;
-$emailCheck= true;
-$userCheck= true;
+$chkEmail= true;
+$chkUser= true;
 
 //check User ID
 if($txtUserID == ""){
     $strError .= "Empty User ID detected...";
 }else{
-    $userCheck = $cf->chkDupUserID($txtUserID);
-    if ($userCheck){
-        $strError .= "Duplicate User ID Found...";
-    }
+        $chkUser = $cf->chkDupMaster($txtUserID,"lf_gbl_user","user_id");
+        if($chkUser){
+            $strError .= "Duplicate User ID Found...";
+        }
 }
 
 //check Email
 if($txtEmail == ""){
     $strError .= "Empty User E-mail detected...";
 }else{
-    $emailCheck = $cf->chkDupEmail($txtEmail);
-    if($emailCheck){
-        $strError .= "Duplicate Email Found...";
-    }
+        $chkEmail = $cf->chkDupMaster($txtEmail,"lf_gbl_user","email");
+        if($chkEmail){
+            $strError .= "Duplicate Email Found...";
+        }
 }
 
 //check Password
@@ -66,8 +67,8 @@ if($txtPassword==""){
 }
 
 if ($strError == ''){
-$stmt = $conn->prepare("INSERT INTO lf_gbl_user(comp_code,user_id,user_name,password,type,status,email,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?,?)");
-$stmt->bind_param("sssssssss",$txtComCode,$txtUserID,$txtUserName,$txtPassword,$txtUserType,$txtStatus,$txtEmail,$txtDateCreated,$txtUIDCreated);
+$stmt = $conn->prepare("INSERT INTO lf_gbl_user(comp_code,user_id,user_name,password,type,status,email,contact_no,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?,?,?)");
+$stmt->bind_param("ssssssssss",$txtComCode,$txtUserID,$txtUserName,$txtPassword,$txtUserType,$txtStatus,$txtEmail,$txtContact,$txtDateCreated,$txtUIDCreated);
 $result = $stmt->execute();
 $stmt->close();
 }

@@ -23,7 +23,7 @@ $strError = '';
 $typeSign ='';
 $dt = new DateTime();
 $txtComCode = 'MY';
-$txtQualificationCode = strtoupper($_REQUEST['txtQualificationCode']);
+$txtQualificationCode = strtoupper(trim($_REQUEST['txtQualificationCode']));
 $txtQualificationDesc = strtoupper($_REQUEST['txtQualificationDesc']);
 $txtAverageBestOf = $_REQUEST['txtAverageBestOf'];
 $txtMinScore = $_REQUEST['txtMinScore'];
@@ -40,14 +40,24 @@ $redirect_url = 'http://'.$path.'/home.php'.$sessionInfoCond;
 $redirect_url_fail = 'http://'.$path.'/home.php'.$sessionInfoCond;
 $result= false;
 
+if($actionType == 'ADD'){
+    if (isset($txtQualificationCode)){
+        $chkQualification = $cf->chkDupMaster($txtQualificationCode,"lf_gbl_qualification","qualification_code");
+        
+        if($chkQualification){
+            $strError .= "Duplicate Qualification Found";
+        }
+    }
+}
+
 if ($strError == ''){
 if ( $actionType == 'ADD'){
 $stmt = $conn->prepare("INSERT INTO lf_gbl_qualification(comp_code,qualification_code,qualification_desc,average_best_of,min_score,max_score,grade_system,grade_subject,status,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?,?,?,?)");
 $stmt->bind_param("sssssssssss",$txtComCode,$txtQualificationCode,$txtQualificationDesc,$txtAverageBestOf,$txtMinScore,$txtMaxScore,$txtGradeSystem,$txtGradeSubject,$txtStatus,$txtDateCreated,$txtUIDCreated);
 $result = $stmt->execute();
 }else if ( $actionType == 'EDIT'){
-$stmt = $conn->prepare("UPDATE lf_gbl_qualification SET qualification_desc = '$txtUserName', average_best_of = '$txtPassword', min_score = '$txtUserType', max_score = '$txtEmail', grade_system = '$txtEmail', max_score = '$txtEmail',lf_uid_modified = '$txtUIDCreated', lf_date_modified='$txtDateCreated' WHERE comp_code = ? AND user_id = ?");
-$stmt->bind_param("ss",$txtComCode,$txtUserID);
+$stmt = $conn->prepare("UPDATE lf_gbl_qualification SET qualification_desc = '$txtQualificationDesc', average_best_of = '$txtAverageBestOf', min_score = '$txtMinScore', max_score = '$txtMaxScore', grade_system = '$txtGradeSystem', grade_subject = '$txtGradeSubject',lf_uid_last_modified = '$txtUIDCreated', lf_date_last_modified='$txtDateCreated' WHERE comp_code = ? AND qualification_code = ?");
+$stmt->bind_param("ss",$txtComCode,$txtQualificationCode);
 $result = $stmt->execute();
 }
 $stmt->close();
