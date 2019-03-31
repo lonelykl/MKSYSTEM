@@ -47,6 +47,8 @@ $comcode = 'MY';
 $menuCode = $_REQUEST["menuCode"];
 $pageName ='';
 $pageDB = '';
+$txtUniCode = '';
+$users1 ='';
 
 $stmt = $conn->prepare("select menu_desc,db_connection from lf_gbl_menu_option where comp_code = ? and menu_code = ?");
 $stmt->bind_param("ss",$comcode,$menuCode);
@@ -59,84 +61,54 @@ $pageDB = $token3;
 }
 $stmt->close();
 
+$applicantID='';
 $applicantName='';
+$applicantEmail='';
 $applicantContactNo='';
-$applicantName='';
-$applicantName='';
-$stmt = $conn->prepare("select menu_desc,db_connection from lf_gbl_menu_option where comp_code = ? and menu_code = ?");
-$stmt->bind_param("ss",$comcode,$menuCode);
+$stmt = $conn->prepare("select user_id,user_name,email,contact_no from lf_gbl_user where comp_code = ? and user_id = ?");
+$stmt->bind_param("ss",$comcode,$Session_UserID);
 $stmt->execute();
-$stmt->bind_result($token2,$token3);
+$stmt->bind_result($token2,$token3,$token4,$token5);
 
 while ( $stmt-> fetch() ) { 
-$pageName = $token2;
-$pageDB = $token3;
+$applicantID = $token2;
+$applicantName = $token3;
+$applicantEmail = $token4;
+$applicantContactNo = $token5;
 }
 $stmt->close();
+if (isset($_POST["txtUniCode"])){
+	$users1 = $_POST["txtUniCode"];
+}
+    
+    echo $users1;
 
 ?>
 <script>
-function getProgramme() {
-  var xhttp;
-  var strTable = 'lf_gbl_programme';
-  var strcolName = 'uni_code';
-  var strFunction = '';
-  var strColVal = '';
-  var strArray = '';
-  var tmpStr = '';
-  var strReturn = '';
-
-  strColVal = document.getElementById("drpUni").value;
-  xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      strReturn = this.responseText;
-      tmpStr = strReturn.split("~");
-	  document.getElementById("lblPageA").value = tmpStr[0]; 
-	  document.getElementById("lblPageB").value = tmpStr[1];
-      document.getElementById("txtUserID").value = tmpStr[3];
-	  document.getElementById("txtUserName").value = tmpStr[4];
-	  document.getElementById("txtPassword").value = tmpStr[5];
-	  document.getElementById("drpUserType").value = tmpStr[6];
-	  document.getElementById("txtEmail").value = tmpStr[7];
-
-	  document.getElementById("txtUserID").disabled =true;
-	  document.getElementById("txtUserName").disabled =true;
-      document.getElementById("txtPassword").disabled =true;
-	  document.getElementById("drpUserType").disabled =true;
-
-	if(tmpStr[0] >= 1){
-	 if(str == 'Next'){
-	 document.getElementById("btnNext").disabled =false;
-	 document.getElementById("btnPrev").disabled =false;
-	 }
-	 if(str == 'Prev'){
-	 document.getElementById("btnPrev").disabled =false;
-	 document.getElementById("btnNext").disabled =false;
-	 }
-	}
-	if(tmpStr[0] == 1){
-	 if(str == 'Next'){
-	 document.getElementById("btnNext").disabled =true;
-	 document.getElementById("btnPrev").disabled =false;
-	 }
-	 if(str == 'Prev'){
-	 document.getElementById("btnPrev").disabled =true;
-	 document.getElementById("btnNext").disabled =false;
-	 }
-	 }
-    }
-  };
-  xhttp.open("GET", "lf_search_function.php?v="+strColVal+"&t="+strTable+"&c="+strcolName+"&f="+strFunction, true);
-  xhttp.send();   
+function getProgrammeDesc(){
+	var test = document.getElementById("drpProgramme");
+	document.getElementById("txtProgrammeDesc").value = test.options[test.selectedIndex].text;
 }
+
+function unlockField(){
+	document.getElementById("txtApplicantID").disabled =false;
+}
+
+function unlockFieldSubmit(){
+	document.getElementById("btnSubmit").disabled =true;
+
+	if (document.getElementById("drpProgramme").value != ""){
+		document.getElementById("btnSubmit").disabled =false;
+	}
+}
+
 </script>
 <body>
 <div id="page">
 <div class="fh5co-section" style="padding-top: 20px;padding-bottom: 20px">
 <div class="container" style="width: 80%; height: 80%;">
 <div class="row">
-<div class="col-md-6 animate-box">				
+<div class="col-md-6 animate-box">			
 <form action="<?php echo $pageDB.$sessionInfoCond ?>" method="post">
 <div class="row form-group">
 <div class="col-md-12">
@@ -149,12 +121,21 @@ University
 :
 </td>
 <td width="110%">
-<select name="drpUni" id="drpUni" style="width: 100%;">
+<select name="drpUni" id="drpUni" style="width: 100%;" onChange="unlockFieldSubmit();">
 <option value="" checked> </option>
 <?php
+$stmt = $conn->prepare("select uni_code,uni_desc from lf_gbl_university where comp_code = ? and status <> 'C'");
+$stmt->bind_param("s",$comcode);
+$stmt->execute();
+$stmt->bind_result($token2,$token3);
 
+while ( $stmt-> fetch() ) { 
 ?>
 <option value="<?php echo $token2 ;?>"><?php echo $token3;?></option>
+<?php
+}
+$stmt->close();
+?>
 </select>
 </td>
 </tr>
@@ -172,11 +153,11 @@ Programme
 :
 </td>
 <td width="110%">
-<select name="drpProgramme" id="drpProgramme" style="width: 100%;" disabled>
-<option value="" checked> </option>
+<select name="drpProgramme" id="drpProgramme" style="width: 100%;" onChange="getProgrammeDesc();unlockFieldSubmit();">
+<option value="" checked> </option>	
 <?php
-$stmt = $conn->prepare("select uni_code,uni_desc from lf_gbl_university where comp_code = ? and status <> 'C' and uni_code = ? ");
-$stmt->bind_param("ss",$comcode,$uniCode);
+$stmt = $conn->prepare("select pro_code,pro_desc from lf_gbl_programme where comp_code = ? and status <> 'C'");
+$stmt->bind_param("s",$comcode);
 $stmt->execute();
 $stmt->bind_result($token2,$token3);
 
@@ -187,6 +168,7 @@ while ( $stmt-> fetch() ) {
 }
 $stmt->close();
 ?>
+<input type="hidden" name="txtProgrammeDesc" id="txtProgrammeDesc" class="form-control" placeholder="Enter Applicant ID">
 </select>
 </td>
 </tr>
@@ -204,7 +186,7 @@ Applicant ID
 :
 </td>
 <td width="110%">
-<input type="text" name="txtApplicantID" id="txtApplicantID" class="form-control" placeholder="Enter Applicant ID">
+<input type="text" name="txtApplicantID" id="txtApplicantID" class="form-control" placeholder="Enter Applicant ID" value="<?php echo $applicantID;?>"disabled>
 </td>
 </tr>
 </table>
@@ -221,7 +203,7 @@ Name
 :
 </td>
 <td width="110%">
-<input type="text" name="txtName" id="txtName" class="form-control" placeholder="Enter Applicant Name">
+<input type="text" name="txtApplicantName" id="txtApplicantName" class="form-control" placeholder="Enter Applicant Name" value="<?php echo $applicantName ;?>">
 </td>
 </tr>
 </table>
@@ -238,7 +220,7 @@ Email
 :
 </td>
 <td width="110%">
-<input type="text" name="txtEmail" id="txtEmail" class="form-control" placeholder="Enter Applicant Email">
+<input type="text" name="txtApplicantEmail" id="txtApplicantEmail" class="form-control" placeholder="Enter Applicant Email" value="<?php echo $applicantEmail ;?>">
 </td>
 </tr>
 </table>
@@ -255,7 +237,7 @@ Contact Number
 :
 </td>
 <td width="110%">
-<input type="text" name="txtContactNo" id="txtContactNo" class="form-control" placeholder="Enter Applicant Contact No">
+<input type="text" name="txtApplicantContact" id="txtApplicantContact" class="form-control" placeholder="Enter Applicant Contact No" value="<?php echo $applicantContactNo ;?>">
 </td>
 </tr>
 </table>
@@ -304,7 +286,7 @@ Date / UID Modified
 </div>							
 </div>
 <div class="form-group">
-<input type="submit" value="Submit" class="btn btn-primary">					
+<input type="submit" name="btnSubmit" id="btnSubmit" value="Submit" class="btn btn-primary" onClick="unlockField();" disabled>					
 </div>	
 </form>						
 </div>		
