@@ -48,7 +48,9 @@ if (isset($_REQUEST["userID"])) {
 <div class="container">
 <div class="row animate-box">
 <div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
-<h2>Write Your Text Here</h2>
+<h2>MK Student Application System</h2>
+<p>Easy to insert the information and enroll the University and Programme.</p>
+<p>Instancely get the information of enrolling to the University.</p>
 </div>
 </div>	
 </div>

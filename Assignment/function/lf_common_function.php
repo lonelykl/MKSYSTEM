@@ -191,33 +191,40 @@ class lf_common_function{
    
 #} end region
 
-#region (Check GamePlay Function){
- /**
-     * Check User First Time login to Update Information 
+#region (Check Duplication Function){
+    /**
+     * Check Duplicate
      */
-    public function checkFirstLogin($userid) 
+    public function chkDupMaster($str,$table,$col) 
     {
 	$txtReturn = '';
-	$sqlFirstLogin = "SELECT lf_username from lf_member_master where lf_userid = $userid";
-	$stmt = $this->conn->prepare($sqlFirstLogin);
+	$cond = "where comp_code = 'MY' and $col = '$str'";
+	$sqlChkDup = "SELECT COUNT(*) AS countRow FROM $table $cond";
+	$stmt = $this->conn->prepare($sqlChkDup);
 	$stmt->execute();
 
-       if ($stmt->execute()) 
-	{
-	    $stmt-> bind_result($token2);
-            if($stmt-> fetch() ) {
-		$txtReturn = $token2;
-            } 
-	    if($txtReturn != ""){
-	   	return false;
-	    }else{
-		return true;
-	    }
+        if ($stmt->execute()) {
+	        $stmt-> bind_result($token2);
+ 	        if($stmt-> fetch() ) 
+	        {
+		        $txtReturn = $token2;
+            }
+            // user existed 
+            $stmt->close();
+
+	        if($txtReturn == 1){
+	   	        return true;
+	        }else{
+		        return false;
+	        }
         } else {
-            return true;
+            // user not existed
+            $stmt->close();
+
+            return false;
         }
-	
-     }
+    }
+   
 #} end region
 
 #region (Autogenerate Counter){
@@ -254,16 +261,19 @@ $stmt->execute();
  /**
      * Auto generate the Uni Admin once created University 
      */
-public function autoGenerateAdmin($uniCode,$uniContact,$uniEmail) 
+public function autoGenerateAdmin($uniCode,$uniContact,$uniEmail,$task) 
 {
 $txtReturn = '';
 $uniAdmin = strtoupper($uniCode.'admin');
+
 $uniAdminName = strtoupper($uniCode.' administrator');
 $uniPassword = '123456';
 $adminType = 'UNI';
-$sqlUniCounter = "INSERT INTO lf_gbl_user(comp_code,user_id,user_name,password,type,email,contact_no,lf_uid_created,lf_date_created)Value('MY','$uniAdmin','$uniAdminName','$uniPassword','$adminType','$uniEmail','$uniContact','SYSTEM',now())";
-$stmt = $this->conn->prepare($sqlUniCounter);
-$stmt->execute();
+if ($task == "ADD"){
+    $sqlUniAdmin = "INSERT INTO lf_gbl_user(comp_code,user_id,user_name,password,type,email,contact_no,status,lf_uid_created,lf_date_created)Value('MY','$uniAdmin','$uniAdminName','$uniPassword','$adminType','$uniEmail','$uniContact','N','SYSTEM',now())";
+    $stmt = $this->conn->prepare($sqlUniAdmin);
+
+    $stmt->execute();
 
    if ($stmt->execute()) 
 {
@@ -279,21 +289,27 @@ $stmt->execute();
     } else {
         return true;
     }
+}else if($task == "EDIT"){
+    $sqlUniAdmin = "UPDATE lf_gbl_user SET email = '$uniEmail',contact_no = '$uniContact',lf_uid_modified = 'SYSTEM',lf_date_modified = now() WHERE comp_code = 'MY' and user_id = '$uniAdmin'";
+    $stmt = $this->conn->prepare($sqlUniAdmin);
+    $stmt->execute();
+}
+
 
  }
 
  #} end region
 
- #region (Autogenerate University Admin){
+ #region (Auto verified the Application){
  /**
-     * Auto generate the Uni Admin once created University 
+     * Automatic Verified the application function
      */
-public function autoApproveApplication($uniCode,$uniContact,$uniEmail) 
+public function autoApproveApplication($appID) 
 {
 $txtReturn = '';
 
 $comcode = 'MY';
-$pstrUserID = "b1401800";
+$pstrUserID = $appID;
 $dbQualification = '';
 $QualificationCount = 0;
 $dbBestOf = '';

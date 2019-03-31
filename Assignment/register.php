@@ -45,6 +45,56 @@ date_default_timezone_set("Asia/Kuala_Lumpur");
 $dt = new DateTime();
 
 ?>
+<script>
+function chkAlphaNumeric(str)
+{ 
+var acceptCharacter = /^[0-9a-zA-Z]+$/;
+if(str.value.match(acceptCharacter)){
+	str.value = str.value;
+}else{
+	alert('Alphabet and Number are acceptable.');
+	str.value = "";
+}
+return str.value
+}
+
+function chkValidEmail(str){
+	if(str.value != ""){
+		if(!str.value.includes("@")){
+		alert("("+str.value+") Invalid Email Address");
+		str.value = "";
+	}else{
+		str.value = str.value;
+	}
+	return str.value;
+	}
+}
+
+function chkValidNumber(str){
+	if(str.value != ""){
+		if(str.value.length > 9){
+			if(str.value.length < 12){	
+				if(isNaN(str.value)){
+					alert("("+str.value+") Invalid Phone Number");
+					str.value = "";
+				}else{
+					str.value = str.value.replace(".","");
+					str.value = str.value.replace("+","");
+					str.value = str.value.replace("-","");
+					str.value = str.value;
+				}
+			}else{
+				alert("("+str.value+") Invalid Phone Number Format");
+				str.value = "";	
+			}
+		}else{
+			alert("("+str.value+") Invalid Phone Number Format");
+			str.value = "";
+		}
+		return str.value;
+	}	
+}
+</script>
 <body>
 <div align= 'middle'>
 <img src="images/logo.png" alt="<?php echo COMPANY_NAME ; ?>" width="820" height="250">
@@ -69,7 +119,7 @@ User ID
 :
 </td>
 <td width="15%">
-<input type="text" name="txtUserID" id="txtUserID" class="form-control" placeholder="Enter User ID" >
+<input type="text" name="txtUserID" id="txtUserID" class="form-control" placeholder="Enter User ID" onBlur="chkAlphaNumeric(this);">
 </td>
 </tr>
 </table>
@@ -120,7 +170,24 @@ User E-mail
 :
 </td>
 <td width="15%">
-<input type="text" name="txtEmail" id="txtEmail" class="form-control" placeholder="Enter E-mail">
+<input type="text" name="txtEmail" id="txtEmail" class="form-control" placeholder="Enter E-mail" onBlur="chkValidEmail(this);">
+</td>
+</tr>
+</table>
+</div>							
+</div>
+<div class="row form-group">
+<div class="col-md-12">
+<table width="30%">
+<tr>
+<td width="10%">
+User Contact No
+</td>
+<td width="5%">
+:
+</td>
+<td width="15%">
+<input type="text" name="txtContact" id="txtContact" class="form-control" placeholder="Enter Contact No" onBlur="chkValidNumber(this);">
 </td>
 </tr>
 </table>
