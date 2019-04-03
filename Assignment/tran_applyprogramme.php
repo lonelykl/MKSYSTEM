@@ -90,6 +90,50 @@ function getProgrammeDesc(){
 	document.getElementById("txtProgrammeDesc").value = test.options[test.selectedIndex].text;
 }
 
+function getProgramme() {
+  var xhttp;
+  var strTable = 'lf_gbl_programme';
+  var strcolName = 'uni_code';
+  var strColVal = '';
+  var tmpStr = '';
+  var tmpStrItem = '';
+  var strReturn = '';
+  var arrayCount;
+  var i;
+
+  strColVal = document.getElementById("drpUni").value;
+document.getElementById("drpProgramme").value = "";
+  if (strColVal== ""){
+	document.getElementById("drpProgramme").disabled=true;
+	document.getElementById("drpProgramme").value = "";
+	document.getElementById("txtProgrammeDesc").value = "";
+	document.getElementById("btnSubmit").disabled=true;
+  }else{
+
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      strReturn = this.responseText;
+	  tmpStr = strReturn.split("||");
+	  arrayCount = tmpStr.length -1;
+	  document.getElementById("drpProgramme").options.length = 1;
+	  var select = document.getElementById("drpProgramme");
+	  var x;
+
+	  for(i = 0; i < arrayCount; i++){
+		tmpStrItem = tmpStr[i].split(",");
+		var option = document.createElement('option');
+        option.value = tmpStrItem[2].toUpperCase();
+		option.text = tmpStrItem[3].toUpperCase();
+        select.add(option, 1);
+	  }
+	  document.getElementById("drpProgramme").disabled=false;
+    }
+  };
+}
+  xhttp.open("GET", "lf_drpdown_function.php?v="+strColVal+"&t="+strTable+"&c="+strcolName, true);
+  xhttp.send();   
+}
 function unlockField(){
 	document.getElementById("txtApplicantID").disabled =false;
 }
@@ -121,7 +165,7 @@ University
 :
 </td>
 <td width="110%">
-<select name="drpUni" id="drpUni" style="width: 100%;" onChange="unlockFieldSubmit();">
+<select name="drpUni" id="drpUni" style="width: 100%;" onChange="getProgramme(this);unlockFieldSubmit();">
 <option value="" checked> </option>
 <?php
 $stmt = $conn->prepare("select uni_code,uni_desc from lf_gbl_university where comp_code = ? and status <> 'C'");
@@ -135,6 +179,8 @@ while ( $stmt-> fetch() ) {
 <?php
 }
 $stmt->close();
+
+$strUniCode = $token2;
 ?>
 </select>
 </td>
@@ -153,21 +199,8 @@ Programme
 :
 </td>
 <td width="110%">
-<select name="drpProgramme" id="drpProgramme" style="width: 100%;" onChange="getProgrammeDesc();unlockFieldSubmit();">
+<select name="drpProgramme" id="drpProgramme" style="width: 100%;" onChange="getProgrammeDesc();unlockFieldSubmit();"disabled>
 <option value="" checked> </option>	
-<?php
-$stmt = $conn->prepare("select pro_code,pro_desc from lf_gbl_programme where comp_code = ? and status <> 'C'");
-$stmt->bind_param("s",$comcode);
-$stmt->execute();
-$stmt->bind_result($token2,$token3);
-
-while ( $stmt-> fetch() ) { 
-?>
-<option value="<?php echo $token2 ;?>"><?php echo $token3;?></option>
-<?php
-}
-$stmt->close();
-?>
 <input type="hidden" name="txtProgrammeDesc" id="txtProgrammeDesc" class="form-control" placeholder="Enter Applicant ID">
 </select>
 </td>
