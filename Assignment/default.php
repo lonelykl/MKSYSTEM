@@ -237,11 +237,11 @@ for ($i = 0; $i <= $strArrayNum ; $i++){
 </li>
 <?php } ?>
 <?php 
-if ($Session_UserID != ''){
+if ($Session_UserType != 'APP' && $Session_UserType != 'DEV'){
 ?>		
 <?php if ($strReportArray != '') {?>
 <li class="dropdown">
-<?php echo '<a href="report.php'.$sessionInfoCond.'" data-toggle="dropdown">';?>Report</a>
+<?php echo '<a href="report.php'.$sessionInfoCond.'" data-toggle="dropdown">';?>Application</a>
 <ul class="dropdown-menu" style="background-color: #000000;" >
 <?php 
 $strArray = explode(",",$strReportArray);
@@ -262,32 +262,10 @@ for ($i = 0; $i <= $strArrayNum ; $i++){
 <?php } else { ?>
 <li><?php echo '<a href="report.php'.$sessionInfoCond.'"  method="post" target="iframe1">';?>Report</a></li>					
 <?php }?>
-<?php if ($strAboutArray != '') {?>
-<li class="dropdown">
-<?php echo '<a href="about.php'.$sessionInfoCond.'" data-toggle="dropdown">';?>About Us</a>
-<ul class="dropdown-menu" style="background-color: #000000;" >
-<?php 
-$strArray = explode(",",$strAboutArray);
-$strArrayNum = count($strArray) - 1;
-
-for ($i = 0; $i <= $strArrayNum ; $i++){
-	$strTemp = explode("-",$strArray[$i]);
-	$pageName = $strTemp[0];
-	$pageWay = $strTemp[1];
-	$pageCode = '& menuCode='.$strTemp[2];
-	?>
-	<li><?php echo '<a href="'.$pageWay.$sessionInfoCond.$pageCode.'" method="post" target="iframe1">';?><?php echo $pageName; ?></a></li>   
-	<?php
-}
-?>
-</ul>
-</li>
-<?php } else { ?>
-<li><?php echo '<a href="about.php'.$sessionInfoCond.'"  method="post" target="iframe1">';?>About Us</a></li>					
-<?php }?>
 <?php
 }
 ?>	
+
 <?php 
 if ($Session_UserID == ''){
 ?>
@@ -320,7 +298,7 @@ if ($Session_UserID == ''){
 <div class="container" style="width: 100%; height: 90%;">
 <div class="row">
 <div class="col-md-6 animate-box">
-<iframe scr="#" name="iframe1" id="iframe1" style="border:1px; width: 206%;height: 620px;" onLoad="this.contentWindow.location"></iframe>
+<iframe scr="home.php" name="iframe1" id="iframe1" style="border:1px; width: 206%;height: 620px;" onLoad="this.contentWindow.location"></iframe>
 </div>
 </div>	
 </div>
