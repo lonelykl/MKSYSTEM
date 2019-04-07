@@ -30,6 +30,7 @@ $txtMinScore = $_REQUEST['txtMinScore'];
 $txtMaxScore = $_REQUEST['txtMaxScore'];
 $txtGradeSystem = strtoupper($_REQUEST['txtGradeSystem']);
 $txtGradeSubject = strtoupper($_REQUEST['txtGradeSubject']);
+$drpGradeType = strtoupper($_REQUEST['drpGradeType']);
 $txtStatus = 'N';
 $txtUIDCreated= $Session_UserID;
 $txtDateCreated = $dt->format('Y/m/d'); 
@@ -52,11 +53,11 @@ if($actionType == 'ADD'){
 
 if ($strError == ''){
 if ( $actionType == 'ADD'){
-$stmt = $conn->prepare("INSERT INTO lf_gbl_qualification(comp_code,qualification_code,qualification_desc,average_best_of,min_score,max_score,grade_system,grade_subject,status,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?,?,?,?)");
-$stmt->bind_param("sssssssssss",$txtComCode,$txtQualificationCode,$txtQualificationDesc,$txtAverageBestOf,$txtMinScore,$txtMaxScore,$txtGradeSystem,$txtGradeSubject,$txtStatus,$txtDateCreated,$txtUIDCreated);
+$stmt = $conn->prepare("INSERT INTO lf_gbl_qualification(comp_code,qualification_code,qualification_desc,average_best_of,min_score,max_score,grade_system,grade_subject,grade_type,status,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?,?,?,?,?)");
+$stmt->bind_param("ssssssssssss",$txtComCode,$txtQualificationCode,$txtQualificationDesc,$txtAverageBestOf,$txtMinScore,$txtMaxScore,$txtGradeSystem,$txtGradeSubject,$drpGradeType,$txtStatus,$txtDateCreated,$txtUIDCreated);
 $result = $stmt->execute();
 }else if ( $actionType == 'EDIT'){
-$stmt = $conn->prepare("UPDATE lf_gbl_qualification SET qualification_desc = '$txtQualificationDesc', average_best_of = '$txtAverageBestOf', min_score = '$txtMinScore', max_score = '$txtMaxScore', grade_system = '$txtGradeSystem', grade_subject = '$txtGradeSubject',lf_uid_last_modified = '$txtUIDCreated', lf_date_last_modified='$txtDateCreated' WHERE comp_code = ? AND qualification_code = ?");
+$stmt = $conn->prepare("UPDATE lf_gbl_qualification SET qualification_desc = '$txtQualificationDesc', average_best_of = '$txtAverageBestOf', min_score = '$txtMinScore', max_score = '$txtMaxScore', grade_system = '$txtGradeSystem', grade_subject = '$txtGradeSubject', grade_type = '$drpGradeType',lf_uid_last_modified = '$txtUIDCreated', lf_date_last_modified='$txtDateCreated' WHERE comp_code = ? AND qualification_code = ?");
 $stmt->bind_param("ss",$txtComCode,$txtQualificationCode);
 $result = $stmt->execute();
 }

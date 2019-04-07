@@ -51,7 +51,7 @@ $result= false;
 $chkExisting = false;
 
 
-$chkExisting = $cf->chkDupMaster($strApplicantID,"lf_gbl_application","applicant_id","uni_code='$strUniCode' and programme_code='$strProgrammeCode'");
+$chkExisting = $cf->chkDupMaster($strApplicantID,"lf_gbl_application","applicant_id","uni_code='$strUniCode' and programme_code='$strProgrammeCode' and (app_status <> 'C' and app_status <> 'R')");
 if ($chkExisting){
     $strError .= "Applicant has been apply once before...";
 }

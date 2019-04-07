@@ -23,12 +23,11 @@ $strError = '';
 $typeSign ='';
 $dt = new DateTime();
 $txtComCode = 'MY';
-$txtUserID = strtoupper($_REQUEST['txtUserID']);
-$txtUserName = strtoupper($_REQUEST['txtUserName']);
-$txtPassword = $_REQUEST['txtPassword'];
-$txtUserType = strtoupper($_REQUEST['drpUserType']);
-$txtEmail = $_REQUEST['txtEmail'];
+$txtUniCode = strtoupper($_REQUEST['txtUniCode']);
+$txtProgrammeCode = strtoupper($_REQUEST['txtProgrammeCode']);
+$txtProgrammeDesc = strtoupper($_REQUEST['txtProgrammeDesc']);
 $txtStatus = 'N';
+$txtLocked = '0';
 $txtUIDCreated= $Session_UserID;
 $txtDateCreated = $dt->format('Y/m/d'); 
 $actionType = strtoupper($_REQUEST['lblAction']);
@@ -37,41 +36,30 @@ $path = IP_CONFIG.PATH_WAY;
 $redirect_url = 'http://'.$path.'/home.php'.$sessionInfoCond;
 $redirect_url_fail = 'http://'.$path.'/home.php'.$sessionInfoCond;
 $result= false;
-$emailCheck= true;
+$ProgrammeCheck= true;
 $userCheck= true;
 
-//check User ID
-if($txtUserID == ""){
-    $strError .= "Empty User ID detected...";
-}else{
-    $userCheck = $cf->chkDupUserID($txtUserID);
-    if ($userCheck){
-        $strError .= "Duplicate User ID Found...";
+if ($actionType == 'ADD'){
+    //check Programme Code
+    if($txtProgrammeCode == ""){
+        $strError .= "Empty Programme Code detected...";
+    }else{
+        $emailCheck = $cf->chkDupMaster($txtProgrammeCode,"lf_gbl_programme","pro_code","uni_code = '$txtUniCode'");
+        if($emailCheck){
+            $strError .= "Duplicate Programme Code Found...";
+        }
     }
 }
 
-//check Email
-if($txtEmail == ""){
-    $strError .= "Empty User E-mail detected...";
-}else{
-    $emailCheck = $cf->chkDupEmail($txtEmail);
-    if($emailCheck){
-        $strError .= "Duplicate Email Found...";
-    }
-}
-
-//check Password
-if($txtPassword==""){
-    $strError .= "Empty Password detected...";
-}
 if ($strError == ''){
 if ( $actionType == 'ADD'){
-$stmt = $conn->prepare("INSERT INTO lf_gbl_user(comp_code,user_id,user_name,password,type,status,email,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?,?)");
-$stmt->bind_param("sssssssss",$txtComCode,$txtUserID,$txtUserName,$txtPassword,$txtUserType,$txtStatus,$txtEmail,$txtDateCreated,$txtUIDCreated);
+$stmt = $conn->prepare("INSERT INTO lf_gbl_programme(comp_code,uni_code,pro_code,pro_desc,status,locked,lf_date_created,lf_uid_created)VALUE(?,?,?,?,?,?,?,?)");
+$stmt->bind_param("ssssssss",$txtComCode,$txtUniCode,$txtProgrammeCode,$txtProgrammeDesc,$txtStatus,$txtLocked,$txtDateCreated,$txtUIDCreated);
 $result = $stmt->execute();
 }else if ( $actionType == 'EDIT'){
-$stmt = $conn->prepare("UPDATE lf_gbl_user SET user_name = '$txtUserName', password = '$txtPassword', type = '$txtUserType', email = '$txtEmail',lf_uid_modified = '$txtUIDCreated', lf_date_modified='$txtDateCreated' WHERE comp_code = ? AND user_id = ?");
-$stmt->bind_param("ss",$txtComCode,$txtUserID);
+$stmt = $conn->prepare("UPDATE lf_gbl_programme SET pro_desc = '$txtProgrammeDesc',lf_uid_last_modified = '$txtUIDCreated', lf_date_last_modified='$txtDateCreated' WHERE comp_code = ? AND uni_code = ? AND pro_code = ? ");
+$stmt->bind_param("sss",$txtComCode,$txtUniCode,$txtProgrammeCode);
+
 $result = $stmt->execute();
 }
 $stmt->close();
