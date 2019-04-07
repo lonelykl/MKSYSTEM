@@ -60,15 +60,15 @@ $pageDB = $token3;
 }
 $stmt->close();
 
-$stmt = $conn->prepare("select uni_code from lf_gbl_user where comp_code = ? and user_id = ?");
-$stmt->bind_param("ss",$comcode,$Session_UserID);
-$stmt->execute();
-$stmt->bind_result($token2);
+$stmtUni = $conn->prepare("select uni_code from lf_gbl_user where comp_code = ? and user_id = ?");
+$stmtUni->bind_param("ss",$comcode,$Session_UserID);
+$stmtUni->execute();
+$stmtUni->bind_result($token2);
 
-while ( $stmt-> fetch() ) { 
+while ( $stmtUni-> fetch() ) { 
 $sessionUniCode = $token2;
 }
-$stmt->close();
+$stmtUni->close();
 
 ?>
 <script>
@@ -124,17 +124,15 @@ function buttonCancelfunction(str) {
 	if (document.getElementById("lblAction").value == 'Add'){
 	document.getElementById("lblPageA").value = '';
 	document.getElementById("lblPageB").value = '';
-    document.getElementById("txtUserID").value = '';
-	document.getElementById("txtUserName").value = '';
-	document.getElementById("txtPassword").value = '';
-	document.getElementById("txtEmail").value ='';
-	document.getElementById("drpUserType").value = 'ADM';
+    document.getElementById("txtProgrammeCode").value = '';
+	document.getElementById("txtProgrammeDesc").value = '';
 	
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnSearch").disabled = false;
 	document.getElementById("btnCancel").disabled = true;
 	document.getElementById("btnPrev").disabled = true;
 	document.getElementById("btnNext").disabled = true; 
+	document.getElementById("btnSubmit").disabled = true; 
 	}
 	else if (document.getElementById("lblAction").value == 'Edit'){
 	document.getElementById("btnAdd").disabled = true;
@@ -143,16 +141,14 @@ function buttonCancelfunction(str) {
 	document.getElementById("btnCancel").disabled = false;
 	document.getElementById("btnPrev").disabled = false;
 	document.getElementById("btnNext").disabled = false; 	
+	document.getElementById("btnSubmit").disabled = true; 
 	}
 
 	else if (document.getElementById("lblAction").value == 'Search'){
 	document.getElementById("lblPageA").value = '';
 	document.getElementById("lblPageB").value = '';
-	document.getElementById("txtUserID").value = '';
-	document.getElementById("txtUserName").value = '';
-	document.getElementById("txtPassword").value = '';
-	document.getElementById("txtEmail").value ='';
-	document.getElementById("drpUserType").value = 'ADM';
+	document.getElementById("txtProgrammeCode").value = '';
+	document.getElementById("txtProgrammeDesc").value = '';
 
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnEdit").disabled = true;
@@ -163,11 +159,8 @@ function buttonCancelfunction(str) {
 	}else{
 	document.getElementById("lblPageA").value = '';
 	document.getElementById("lblPageB").value = '';
-    document.getElementById("txtUserID").value = '';
-	document.getElementById("txtUserName").value = '';
-	document.getElementById("txtPassword").value = '';
-	document.getElementById("txtEmail").value ='';
-	document.getElementById("drpUserType").value = 'ADM';
+	document.getElementById("txtProgrammeCode").value = '';
+	document.getElementById("txtProgrammeDesc").value = '';
 
 	document.getElementById("btnAdd").disabled = false;
 	document.getElementById("btnEdit").disabled = true;
@@ -177,64 +170,58 @@ function buttonCancelfunction(str) {
 	document.getElementById("btnNext").disabled = true; 
 
 	}
-	document.getElementById("txtUserID").disabled =true;
-	document.getElementById("txtUserName").disabled =true;
-    document.getElementById("txtPassword").disabled =true;
-	document.getElementById("txtEmail").disabled =true;
-	document.getElementById("drpUserType").disabled =true;
+	document.getElementById("txtUniCode").disabled =true;
+	document.getElementById("txtProgrammeCode").disabled =true;
+    document.getElementById("txtProgrammeDesc").disabled =true;
 }
 
 function buttonAddfunction(str) {
 	document.getElementById("lblPageA").value = '';
 	document.getElementById("lblPageB").value = '';
-    document.getElementById("txtUserID").value = '';
-	document.getElementById("txtUserName").value = '';
-	document.getElementById("txtPassword").value = '';
-	document.getElementById("drpUserType").value = 'ADM';
+	document.getElementById("txtProgrammeCode").value = '';
+	document.getElementById("txtProgrammeDesc").value = '';
 	
-	document.getElementById("txtUserID").disabled =false;
-	document.getElementById("txtUserName").disabled =false;
-    document.getElementById("txtPassword").disabled =false;
-	document.getElementById("drpUserType").disabled =false;
-	document.getElementById("txtEmail").disabled =false;
+	document.getElementById("txtUniCode").disabled =true;
+	document.getElementById("txtProgrammeCode").disabled =false;
+	document.getElementById("txtProgrammeDesc").disabled =false;
+	document.getElementById("btnSubmit").disabled =false;
 }
 
 function buttonEditfunction(str) {
-	document.getElementById("txtUserID").disabled =false;
-	document.getElementById("txtUserName").disabled =false;
-    document.getElementById("txtPassword").disabled =false;
-	document.getElementById("drpUserType").disabled =false;
-	document.getElementById("txtEmail").disabled =false;
+	document.getElementById("txtUniCode").disabled =true;
+	document.getElementById("txtProgrammeCode").disabled =true;
+    document.getElementById("txtProgrammeDesc").disabled =false;
+	document.getElementById("btnSubmit").disabled =false;
 }
 
 function buttonNextPrevfunction(str) {
   var xhttp;
-  var strTable = 'lf_gbl_user';
-  var strcolName = 'user_id';
+  var strTable = 'lf_gbl_programme';
+  var strcolName = 'pro_code';
   var strFunction = str;
   var strColVal = '';
   var strArray = '';
   var tmpStr = '';
   var strReturn = '';
+  var extraCondition = "uni_code";
+  var extraValue = document.getElementById("txtUniCode").value
 
-  strColVal = document.getElementById("txtUserID").value;
+  strColVal = document.getElementById("txtProgrammeCode").value;
     xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       strReturn = this.responseText;
       tmpStr = strReturn.split("~");
+	
 	  document.getElementById("lblPageA").value = tmpStr[0]; 
 	  document.getElementById("lblPageB").value = tmpStr[1];
-      document.getElementById("txtUserID").value = tmpStr[3];
-	  document.getElementById("txtUserName").value = tmpStr[4];
-	  document.getElementById("txtPassword").value = tmpStr[5];
-	  document.getElementById("drpUserType").value = tmpStr[6];
-	  document.getElementById("txtEmail").value = tmpStr[7];
+      document.getElementById("txtUniCode").value = tmpStr[3];
+	  document.getElementById("txtProgrammeCode").value = tmpStr[4];
+	  document.getElementById("txtProgrammeDesc").value = tmpStr[5];
 
-	  document.getElementById("txtUserID").disabled =true;
-	  document.getElementById("txtUserName").disabled =true;
-      document.getElementById("txtPassword").disabled =true;
-	  document.getElementById("drpUserType").disabled =true;
+	  document.getElementById("txtUniCode").disabled =true;
+	  document.getElementById("txtProgrammeCode").disabled =true;
+      document.getElementById("txtProgrammeDesc").disabled =true;
 
 	if(tmpStr[0] >= 1){
 	 if(str == 'Next'){
@@ -256,10 +243,17 @@ function buttonNextPrevfunction(str) {
 	 document.getElementById("btnNext").disabled =false;
 	 }
 	 }
-    }
+    
+  }
   };
-  xhttp.open("GET", "lf_search_function.php?v="+strColVal+"&t="+strTable+"&c="+strcolName+"&f="+strFunction, true);
+  xhttp.open("GET", "lf_search_function.php?v="+strColVal+"&t="+strTable+"&c="+strcolName+"&f="+strFunction+"&ec="+extraCondition+"&ev="+extraValue, true);
   xhttp.send();   
+}
+
+function unlockField(){
+	document.getElementById("txtUniCode").disabled =false;
+	document.getElementById("txtProgrammeCode").disabled =false;
+	document.getElementById("txtProgrammeDesc").disabled =false;
 }
 </script>
 <body>
@@ -319,10 +313,10 @@ Action
 </table>
 </div>
 </div>
-<div class="row form-group">
+<div class="row form-group" style="display:none">
 <div class="col-md-12">
 <table width="130%">
-<tr style="display:none">
+<tr><!-- <tr style="display:none"> -->
 <td width="25%">
 Uni Code
 </td>
@@ -330,7 +324,7 @@ Uni Code
 :
 </td>
 <td width="110%">
-<input type="text" name="txtUniCode" id="txtUniCode" class="form-control" placeholder="Enter University Code" disabled>
+<input type="text" name="txtUniCode" id="txtUniCode" class="form-control" placeholder="Enter University Code" value="<?php echo $sessionUniCode; ?>"disabled>
 </td>
 </tr>
 </table>
@@ -341,13 +335,13 @@ Uni Code
 <table width="130%">
 <tr>
 <td width="25%">
-User Name
+Programme Code
 </td>
 <td width="5%">
 :
 </td>
 <td width="110%">
-<input type="text" name="txtUserName" id="txtUserName" class="form-control" placeholder="Enter User Name" disabled>
+<input type="text" name="txtProgrammeCode" id="txtProgrammeCode" class="form-control" placeholder="Enter Programme Code" disabled>
 </td>
 </tr>
 </table>
@@ -358,52 +352,13 @@ User Name
 <table width="130%">
 <tr>
 <td width="25%">
-Password
+Programme Description
 </td>
 <td width="5%">
 :
 </td>
 <td width="110%">
-<input type="password" name="txtPassword" id="txtPassword" class="form-control" placeholder="Enter Password" disabled>
-</td>
-</tr>
-</table>
-</div>							
-</div>
-<div class="row form-group">
-<div class="col-md-12">
-<table width="130%">
-<tr>
-<td width="25%">
-User E-mail
-</td>
-<td width="5%">
-:
-</td>
-<td width="110%">
-<input type="text" name="txtEmail" id="txtEmail" class="form-control" placeholder="Enter E-mail" disabled>
-</td>
-</tr>
-</table>
-</div>							
-</div>
-<div class="row form-group">
-<div class="col-md-12">
-<table width="130%">
-<tr>
-<td width="25%">
-User Type
-</td>
-<td width="5%">
-:
-</td>
-
-<td width="110%">
-<select name="drpUserType" id="drpUserType" style="width: 100%;" disabled>
-<option value="UNI" checked>UNIVERSITY ADMIN</option>
-<option value="DEV">SAS ADMIN</option>
-<option value="APP">APPLICANT</option>
-</select>
+<input type="text" name="txtProgrammeDesc" id="txtProgrammeDesc" class="form-control" placeholder="Enter Programme Desc" disabled>
 </td>
 </tr>
 </table>
@@ -452,7 +407,7 @@ Date / UID Modified
 </div>							
 </div>
 <div class="form-group">
-<input type="submit" value="Submit" class="btn btn-primary">					
+<input type="submit" name="btnSubmit" id="btnSubmit" value="Submit" class="btn btn-primary" onclick="unlockField();" disabled>					
 </div>		
 </form>
 </div>		

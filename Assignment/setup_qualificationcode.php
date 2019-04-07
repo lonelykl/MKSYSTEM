@@ -193,6 +193,7 @@ function buttonCancelfunction(str) {
 	document.getElementById("txtSubjectAfter").disabled =true;
 	document.getElementById("btnAmendGrade").disabled =true;
 	document.getElementById("btnAmendSubject").disabled =true;
+	document.getElementById("drpGradeType").disabled =true;
 }
 
 function buttonAddfunction(str) {
@@ -209,6 +210,7 @@ function buttonAddfunction(str) {
 	document.getElementById("txtScore").value ='';
 	document.getElementById("drpSubjectBefore").value ='';
 	document.getElementById("txtSubjectAfter").value ='';
+	document.getElementById("drpGradeType").value ='GRADE';
 	
 	document.getElementById("txtQualificationCode").disabled =false;
 	document.getElementById("txtQualificationDesc").disabled =false;
@@ -223,6 +225,7 @@ function buttonAddfunction(str) {
 	document.getElementById("txtSubjectAfter").disabled = false;
 	document.getElementById("btnAmendGrade").disabled =false;
 	document.getElementById("btnAmendSubject").disabled =false;
+	document.getElementById("drpGradeType").disabled =false;
 }
 
 function buttonEditfunction(str) {
@@ -239,6 +242,7 @@ function buttonEditfunction(str) {
 	document.getElementById("txtSubjectAfter").disabled =false;
 	document.getElementById("btnAmendGrade").disabled =false;
 	document.getElementById("btnAmendSubject").disabled =false;
+	document.getElementById("drpGradeType").disabled =false;
 	genDrpDwnListSubject();
 }
 
@@ -267,6 +271,7 @@ function buttonNextPrevfunction(str) {
 	  document.getElementById("txtMaxScore").value = tmpStr[7];
 	  document.getElementById("txtGradeSystem").value = tmpStr[8];
 	  document.getElementById("txtGradeSubject").value = tmpStr[9];
+	  document.getElementById("drpGradeType").value = tmpStr[10];
 
 	  document.getElementById("txtQualificationCode").disabled =true;
 	  document.getElementById("txtQualificationDesc").disabled =true;
@@ -315,6 +320,7 @@ function addGrade(){
 	var piority = false;
 	var i;
 
+
 	if(strGrade.trim() != ""){
 			if(strScore.trim() != ""){
 
@@ -358,6 +364,76 @@ function addGrade(){
 			alert("Grade Cannot be Empty");
 		}
 	
+}
+function addScore(){
+	var strScore = document.getElementById("txtScore").value;
+	var strGradeSystem = document.getElementById("txtGradeSystem").value;
+	var strFlag = true;
+	var newItem = false;
+	var piority = false;
+	var tmpStr = "";
+
+	if(strScore.trim() != ""){
+		if(strGradeSystem != ""){
+			var strGradeSystemArray = strGradeSystem.split(";");
+			var strGradeSystemArrayCount = strGradeSystemArray.length-1;
+
+		for(i=0;i<strGradeSystemArrayCount;i++){
+			if(strScore == strGradeSystemArray[i]){
+				tmpStr += strScore + ";";
+				piority = true;
+				newItem = false;
+			}else{
+				tmpStr +=  strGradeSystemArray[i] + ";";
+				if(!piority){
+					newItem = true;
+				}
+			}
+		}
+		if(newItem){
+			tmpStr += strScore + ";";
+		}
+		document.getElementById("txtGradeSystem").value = "";
+		document.getElementById("txtGradeSystem").value += tmpStr;
+		document.getElementById("txtGrade").value = "";
+		document.getElementById("txtScore").value = "";
+		strFlag=false;
+
+		if(strFlag){
+			document.getElementById("txtGradeSystem").value += strScore + ";";
+			document.getElementById("txtGrade").value = "";
+			document.getElementById("txtScore").value = "";
+		}
+		}else{
+		tmpStr += strScore + ";";
+		document.getElementById("txtGradeSystem").value = "";
+		document.getElementById("txtGradeSystem").value += tmpStr;
+		document.getElementById("txtGrade").value = "";
+		document.getElementById("txtScore").value = "";
+		}
+	
+		}else{
+			alert("Score Cannot be Empty");	
+		}
+	
+}
+function addGradeScoreFunction(){
+	var strGradeType = document.getElementById("drpGradeType").value.toUpperCase();
+	if (strGradeType == "GRADE"){
+		addGrade();
+	}else{
+		addScore();
+	}
+}
+
+function gradeSystemSetting(){
+	var strGradeType = document.getElementById("drpGradeType").value.toUpperCase();
+	if (strGradeType == "GRADE"){
+		document.getElementById("txtGrade").disabled=false;		
+	}else{
+		document.getElementById("txtGrade").disabled=true;
+	}
+	document.getElementById("txtGradeSystem").value = "";
 }
 function addSubject(){
 	var strSubjectBefore = document.getElementById("drpSubjectBefore").value.toUpperCase();
@@ -611,6 +687,26 @@ Maximum Score
 <table width="130%">
 <tr>
 <td width="25%">
+Grade Type
+</td>
+<td width="5%">
+:
+</td>
+<td width="110%">
+<select name="drpGradeType" id="drpGradeType" style="width: 100%;" onChange="gradeSystemSetting();" disabled>
+<option value="GRADE" selected>Grade</option>
+<option value="SCORE" >Score</option>
+</select>
+</td>
+</tr>
+</table>
+</div>							
+</div>
+<div class="row form-group">
+<div class="col-md-12">
+<table width="130%">
+<tr>
+<td width="25%">
 Grade System
 </td>
 <td width="5%">
@@ -623,7 +719,7 @@ Grade System
 <input type="text" name="txtScore" id="txtScore" class="form-control" placeholder="Enter Score" disabled>
 </td>
 <td width="40%">
-<input type="button" value="AMEND" name="btnAmendGrade" id="btnAmendGrade" onClick="addGrade();" disabled>					
+<input type="button" value="AMEND" name="btnAmendGrade" id="btnAmendGrade" onClick="addGradeScoreFunction();" disabled>					
 </td>
 </tr>
 </table>
