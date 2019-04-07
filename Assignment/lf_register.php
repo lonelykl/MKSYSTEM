@@ -35,7 +35,7 @@ $txtUIDCreated= "SYSTEM";
 $txtDateCreated = $dt->format('Y/m/d'); 
 $path = IP_CONFIG.PATH_WAY;
 
-$redirect_url = 'http://'.$path.'/login.php'.$sessionInfoCond;
+$redirect_url = 'http://'.$path.'/setup_app_first_qualification.php?userID='.$txtUserID.'&userType='.$txtUserType;
 $redirect_url_fail = 'http://'.$path.'/register.php'.$sessionInfoCond;
 $result= false;
 $chkEmail= true;
@@ -75,7 +75,13 @@ $stmt->close();
 
 if($result)
 {
-echo "<script type='text/javascript'>alert('Record has been successful...');window.location = '$redirect_url'</script>";
+    $cf->autoGenerateAppQualification($txtUserID);
+}
+
+if($result)
+{
+echo "<script type='text/javascript'>alert('Record has been successful...');</script>";
+echo "<script type='text/javascript'>alert('Kindly fill up the qualification that applicant having now...');window.location = '$redirect_url'</script>";
 exit();
 }else{
     echo "<script type='text/javascript'>alert('$strError');</script>";

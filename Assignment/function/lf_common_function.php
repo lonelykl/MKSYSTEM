@@ -195,10 +195,13 @@ class lf_common_function{
     /**
      * Check Duplicate
      */
-    public function chkDupMaster($str,$table,$col) 
+    public function chkDupMaster($str,$table,$col,$pcond="") 
     {
 	$txtReturn = '';
-	$cond = "where comp_code = 'MY' and $col = '$str'";
+    $cond = "where comp_code = 'MY' and $col = '$str'";
+    if($pcond != ""){
+        $cond .= " and $pcond";
+    }
 	$sqlChkDup = "SELECT COUNT(*) AS countRow FROM $table $cond";
 	$stmt = $this->conn->prepare($sqlChkDup);
 	$stmt->execute();
@@ -362,6 +365,55 @@ return $finalResult;
  }
 
  #} end region
+
+ public function autoGenerateAppQualification($appID) 
+{
+$txtReturn = '';
+$sqlAppQualification = "INSERT INTO lf_applicant_grade(comp_code,user_id,lf_uid_created,lf_date_created)Value('MY','$appID','SYSTEM',now())";
+$stmt = $this->conn->prepare($sqlAppQualification);
+$stmt->execute();
+
+   if ($stmt->execute()) 
+{
+    $stmt-> bind_result($token2);
+        if($stmt-> fetch() ) {
+    $txtReturn = $token2;
+        } 
+    if($txtReturn != ""){
+       return false;
+    }else{
+    return true;
+    }
+    } else {
+        return true;
+    }
+
+ }
+
+ public function chkAppQualificationExist($appID) 
+{
+$txtReturn = '';
+$sqlAppQualification = "SELECT qualification_code FROM lf_applicant_grade WHERE comp_code = 'MY' AND user_id = '$appID'";
+$stmt = $this->conn->prepare($sqlAppQualification);
+$stmt->execute();
+
+   if ($stmt->execute()) 
+    {
+        $stmt-> bind_result($token2);
+        if($stmt-> fetch() ) {
+            $txtReturn = $token2;
+        } 
+        
+        if($txtReturn == ""){
+        return false;
+        }else{
+        return true;
+        }
+    } else {
+        return true;
+    }
+
+ }
 }
 
 
