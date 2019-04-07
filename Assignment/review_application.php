@@ -52,8 +52,16 @@ if ( $stmtUser-> fetch() ) {
     $uniCode = $token2;
 }
 $stmtUser->close();
+
+$DBPage = 'review_application_form.php';
+$DBPage .=  $sessionInfoCond;
+$DBPage .= '&uni_code='. $uniCode .'&application_no=';
 ?>
 <script>
+function showFeedback(str){
+    alert(str);
+}
+</script>
 <body>
 <div class="fh5co-loader"></div>
 <div id="page">
@@ -67,7 +75,7 @@ $stmtUser->close();
 <div class="container" style="width: 80%; height: 80%;">
 <div class="row animate-box">
 <div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
-<H2>Application Enquiry</h2>
+<H2>Review Application</h2>
 <br>
 <table border = '2' width="900px">
 <tr>
@@ -86,6 +94,9 @@ Programme
 <td width='20%'>
 Application Status
 </td>
+<td width='30%'>
+Feedback
+</td>
 </tr>
 <?php 
 $stmt = $conn->prepare("select lf_date_created,application_no,programme_name,app_status from lf_gbl_application where comp_code = ? and uni_code = ? order by application_no");
@@ -94,6 +105,7 @@ $stmt->execute();
 $stmt->bind_result($token2,$token3,$token4,$token5);
 while ( $stmt-> fetch() ) { 
 ?>
+<form action = "<?php echo $DBPage.$token3;?>" method="post">
 <tr>
 <td>
 <?php echo $SeqNo ?>
@@ -110,7 +122,11 @@ while ( $stmt-> fetch() ) {
 <td>
 <?php echo $token5?>
 </td>
+<td>
+<input type="submit" name="btnView" id="btnView" value="View">
+</td>
 </tr>
+</form>
 <?php 
 $SeqNo += 1;
 }

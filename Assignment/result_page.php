@@ -40,9 +40,14 @@ require_once 'config/lf_connect.php';
     $conn = $db->connect();
     
 $comcode = 'MY';
-$SeqNo = 1
+$SeqNo = 1;
 
 ?>
+<script>
+function showFeedback(str){
+    alert(str);
+}
+</script>
 <body>
 <div class="fh5co-loader"></div>
 <div id="page">
@@ -60,7 +65,7 @@ $SeqNo = 1
 <b>Status <br>
 P = Pending / R = Reject / C = Cancel / A = Approve </b>
 <br>
-<table border = '2'>
+<table border = '2' width="900px">
 <tr>
 <td width='5%'>
 No
@@ -80,12 +85,15 @@ Programme
 <td width='20%'>
 Status
 </td>
+<td width='30%'>
+Feedback
+</td>
 </tr>
 <?php 
-$stmt = $conn->prepare("select lf_date_created,uni_code,application_no,programme_name,app_status from lf_gbl_application where comp_code = ? and applicant_id = ? order by lf_date_created");
+$stmt = $conn->prepare("select lf_date_created,uni_code,application_no,programme_name,app_status,app_feedback from lf_gbl_application where comp_code = ? and applicant_id = ? order by lf_date_created");
 $stmt->bind_param("ss",$comcode,$Session_UserID);
 $stmt->execute();
-$stmt->bind_result($token2,$token3,$token4,$token5,$token6);
+$stmt->bind_result($token2,$token3,$token4,$token5,$token6,$token7);
 while ( $stmt-> fetch() ) { 
 ?>
 <tr>
@@ -107,6 +115,11 @@ while ( $stmt-> fetch() ) {
 <td width='20%'>
 <?php echo $token6 ?>
 </td>
+<td width='30%'>
+<?php if($token7 != ""){ ?>
+<input type="button" name="btnView" id="btnView" value="View" onclick="showFeedback('<?php echo $token7;?>');">
+<?php } ?>
+</td>
 </tr>
 <?php 
 $SeqNo += 1;
@@ -125,8 +138,6 @@ $stmt->close();
 <script src="js/jquery.magnific-popup.min.js"></script>
 <script src="js/magnific-popup-options.js"></script>
 <script src="js/main.js"></script>
-
-	
 </body>
 </html>
 
